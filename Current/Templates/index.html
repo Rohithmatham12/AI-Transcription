@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcr<span style="font-style: italic;">AI</span>be: Elevate Your Transcription Experience</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap');
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-y: auto;
+        }
+        header {
+            background-color: #28a745;
+            width: 100%;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+        header h1 {
+            margin: 0;
+        }
+        header h1 a {
+            color: #fff;
+            font-size: 24px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        header h1 a span {
+            font-style: italic;
+        }
+        header h1 a:hover {
+            text-decoration: underline;
+        }
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-top: 80px;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            width: 100%;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .container:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        h2, .subtitle {
+            text-align: center;
+            color: #333;
+            font-weight: 600;
+            margin: 20px 0 20px;
+        }
+        .subtitle {
+            font-size: 18px;
+            color: #555;
+            font-style: italic;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input[type="file"], input[type="text"] {
+            margin: 20px 0;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 12px 24px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+        .transcription {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        #download-button, #download-url-button {
+            margin-top: 20px;
+            display: none;
+        }
+        #loading, #url-loading {
+            display: none;
+            text-align: center;
+        }
+        #loading img, #url-loading img {
+            width: 50px;
+            height: 50px;
+        }
+        #notification {
+            display: none;
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            font-weight: 600;
+        }
+        @media (max-width: 600px) {
+            header h1 a {
+                font-size: 20px;
+            }
+            .container {
+                padding: 20px;
+            }
+            button {
+                width: 100%;
+                padding: 10px;
+                font-size: 14px;
+            }
+            input[type="file"], input[type="text"] {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+        @media (max-width: 768px) {
+            header h1 a {
+                font-size: 22px;
+            }
+            .container {
+                padding: 25px;
+            }
+            button {
+                width: 100%;
+                padding: 12px;
+                font-size: 15px;
+            }
+            input[type="file"], input[type="text"] {
+                padding: 11px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="/">Transcr<span style="font-style: italic;">AI </span>be</a></h1>
+    </header>
+    <div class="content">
+        <div class="subtitle">Elevate Your Transcription Experience</div>
+        <div class="container">
+            <h2>Transcribe Audio/Video URL</h2>
+            <form id="url-form">
+                <input type="text" id="url-input" name="url" placeholder="Enter audio/video URL">
+                <button type="button" onclick="transcribeURL()">Transcribe URL</button>
+            </form>
+            <div id="url-loading">
+                <img src="https://i.imgur.com/4L8W4ks.gif" alt="Loading...">
+                <p>Loading...</p>
+            </div>
+            <div id="url-transcription" class="transcription"></div>
+            <button id="download-url-button" onclick="downloadURLFile()">Download Transcription</button>
+        </div>
+        <div class="container">
+            <h2>Upload Audio/Video File for Transcription</h2>
+            <form id="upload-form" enctype="multipart/form-data">
+                <input type="file" id="file-input" name="file" accept="audio/*,video/*">
+                <button type="button" onclick="uploadFile()">Upload</button>
+            </form>
+            <div id="loading">
+                <img src="https://i.imgur.com/4L8W4ks.gif" alt="Loading...">
+                <p>Loading...</p>
+            </div>
+            <div id="file-transcription" class="transcription"></div>
+            <button id="download-button" onclick="downloadFile()">Download Transcription</button>
+            <div id="notification"></div>
+        </div>
+    </div>
+
+    <script>
+        function showNotification(message) {
+            var notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(function() {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        function uploadFile() {
+            document.getElementById('loading').style.display = 'block';
+            var formData = new FormData(document.getElementById('upload-form'));
+            fetch('/transcribe', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('file-transcription').textContent = data.transcription;
+                document.getElementById('download-button').style.display = 'block';
+                document.getElementById('download-button').setAttribute('data-transcription', data.transcription);
+                showNotification('Transcription successful');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('loading').style.display = 'none';
+            });
+        }
+
+        function transcribeURL() {
+            document.getElementById('url-loading').style.display = 'block';
+            var url = document.getElementById('url-input').value;
+            fetch('/transcribe_url', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({url: url})
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('url-loading').style.display = 'none';
+                document.getElementById('url-transcription').textContent = data.transcription;
+                document.getElementById('download-url-button').style.display = 'block';
+                document.getElementById('download-url-button').setAttribute('data-transcription', data.transcription);
+                showNotification('Transcription successful');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('url-loading').style.display = 'none';
+            });
+        }
+
+        function downloadFile() {
+            var transcription = document.getElementById('download-button').getAttribute('data-transcription');
+            if (transcription) {
+                fetch('/download?transcription=' + encodeURIComponent(transcription))
+                .then(response => response.blob())
+                .then(blob => {
+                    var url = window.URL.createObjectURL(blob);
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'transcription.txt';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                });
+            }
+        }
+
+        function downloadURLFile() {
+            var transcription = document.getElementById('download-url-button').getAttribute('data-transcription');
+            if (transcription) {
+                fetch('/download?transcription=' + encodeURIComponent(transcription))
+                .then(response => response.blob())
+                .then(blob => {
+                    var url = window.URL.createObjectURL(blob);
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'transcription.txt';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                });
+            }
+        }
+    </script>
+</body>
+</html>
